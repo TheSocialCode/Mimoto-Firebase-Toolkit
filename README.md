@@ -1,6 +1,6 @@
 # Mimoto-Firebase-Toolkit
 
-Frequently used [Firebase](https://firebase.google.com/) modules for rapid app creation with [Mimoto](https://thesocialcode.com/mimoto).
+Frequently used [Mimoto](https://thesocialcode.com/mimoto) modules for rapid app creation in [Firebase](https://firebase.google.com/).
 
 ## In this package
 
