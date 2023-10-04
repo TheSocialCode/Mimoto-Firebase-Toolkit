@@ -1,0 +1,16 @@
+{
+  "name": "mimoto-firebase-toolkit",
+  "version": "1.0.0",
+  "description": "Mimoto Firebase Toolkit",
+  "engines": {
+    "node": "16"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "openai": "^3.2.1"
+  },
+  "devDependencies": {
+
+  },
+  "private": true
+}
