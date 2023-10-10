@@ -94,8 +94,10 @@ class ConversationGPT
 					for (const payload of payloads) {
 						if (payload.includes('[DONE]')) return;
 						if (payload.startsWith("data:")) {
-							const data = JSON.parse(payload.replace("data: ", ""));
 							try {
+
+								const data = JSON.parse(payload.replace("data: ", ""));
+
 								const chunk = data.choices[0].delta?.content;
 								if (chunk) {
 
