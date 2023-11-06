@@ -161,10 +161,106 @@ function clone(objectToClone)
 	return JSON.parse(JSON.stringify(objectToClone));
 }
 
-isObject = function(variableToVerify)
+function isObject(variableToVerify)
 {
 	// 1. verify and report
 	return (variableToVerify && typeof variableToVerify === 'object' && !Array.isArray(variableToVerify));
+}
+
+/**
+ * Deep merge the objectToMerge into objectToMergeInto with objectToMerge's values being dominant
+ * @param objectToMergeInto primaryObject
+ * @param objectToMerge secondaryObject
+ * @returns the merge result as a new object
+ */
+function mergeDeep(objectToMergeInto, objectToMerge)
+{
+	// 1. init
+	let mergedObject = {};
+
+	// 2. validate
+	if (isObject(objectToMergeInto) && isObject(objectToMerge))
+	{
+		// a. parse all keys
+		for (let sKey in objectToMerge)
+		{
+			// I. verify
+			if (objectToMergeInto[sKey] === undefined || isObject(objectToMerge[sKey]) && Object.keys(objectToMerge[sKey]).length === 0)
+			{
+				// 1. store
+				mergedObject[sKey] = objectToMerge[sKey];
+
+				// 2. next
+				continue;
+			}
+
+			// II. verify
+			if (isObject(objectToMergeInto[sKey]))
+			{
+				// 1. merge and store
+				mergedObject[sKey] = mergeDeep(objectToMergeInto[sKey], objectToMerge[sKey]);
+
+				// 2. next
+				continue;
+			}
+
+			// III. store
+			mergedObject[sKey] = objectToMerge[sKey];
+		}
+
+		// b. copy remaining properties
+		for (let sKey in objectToMergeInto)
+		{
+			if (mergedObject[sKey] === undefined) mergedObject[sKey] = objectToMergeInto[sKey];
+		}
+	}
+	else
+	{
+		// a. store
+		// if (objectToMergeInto && !objectToMerge) mergedObject = objectToMergeInto;
+		// if (!objectToMergeInto && objectToMerge) mergedObject = objectToMerge;
+		mergedObject = (isEmpty(objectToMergeInto)) ? objectToMerge : objectToMergeInto;
+		// mergedObject = objectToMerge;
+	}
+
+	// 3. send
+	return mergedObject;
+}
+
+/**
+ * Check if all values are empty
+ * @param value
+ * @returns boolean Returns true if ALL values are empty
+ */
+function isEmpty(value = undefined)
+{
+	// 1. init
+	let aResults = [];
+
+	// 2. check all passed values
+	for (const argument of arguments)
+	{
+		// a. init
+		let bSubResult = false;
+
+		// b. validate general
+		if (argument === null || argument === undefined || argument === '') bSubResult = true
+
+		// c. validate string
+		else if (typeof(argument) === 'string' && argument === '') bSubResult = true;
+
+		// d. validate arrays
+		else if (Array.isArray(argument) || argument.length === 0) bSubResult = true;
+
+		// e. validate objects
+		else if (typeof(argument) === 'object') bSubResult = (argument && Object.keys(argument).length === 0 && Object.getPrototypeOf(argument) === Object.prototype);
+
+		// f. store
+		aResults.push(bSubResult)
+	}
+
+	// 3. default
+	return aResults.every(bResult => bResult === true);
 }
 
 
@@ -175,6 +271,8 @@ module.exports = {
 	readFile,
 	collectDeepValues,
 	replaceVars,
-	clone,
-	isObject
+	clone,              // move to MimotoToolkit
+	isObject,           // move to MimotoToolkit
+	mergeDeep,          // move to MimotoToolkit
+	isEmpty             // move to MimotoToolkit
 };
