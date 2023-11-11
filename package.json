@@ -1,6 +1,6 @@
 {
-  "name": "mimoto-firebase-toolkit",
-  "version": "1.0.0",
+  "name": "@thesocialcode/mimoto-firebase-toolkit",
+  "version": "1.0.1",
   "description": "Mimoto Firebase Toolkit",
   "engines": {
     "node": "16"
@@ -12,5 +12,5 @@
   "devDependencies": {
 
   },
-  "private": true
+  "private": false
 }
