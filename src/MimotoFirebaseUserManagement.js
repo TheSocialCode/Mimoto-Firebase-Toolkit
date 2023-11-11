@@ -36,23 +36,26 @@ function setSpecialCustomClaims(firebaseAdmin, user, config = {})
 		if (!Array.isArray(aUsers)) reject('Special permissions config needs to be either an object or an array of objects');
 
 		// 4. find user
-		aUsers.forEach(async userConfig => {
+		for (let nIndex = 0; nIndex < aUsers.length; nIndex++)
+		{
+			// a. register
+			let userConfig = aUsers[nIndex];
 
-			// a. validate or skip
+			// b. validate or skip
 			if (!MimotoFirebaseUtils.isObject(userConfig)) return;
 
-			// b. validate and skip
+			// c. validate and skip
 			if (!userConfig.email || userConfig.email.toLowerCase() !== user.email.toLowerCase()) return;
 
-			// c. validate or skip
+			// d. validate or skip
 			if (!MimotoFirebaseUtils.isObject(userConfig.customUserClaims)) return;
 
-			// d. set custom claim for the user
-			await firebaseAdmin.auth().setCustomUserClaims(user.uid, customUserClaims);
+			// e. set custom claim for the user
+			await firebaseAdmin.auth().setCustomUserClaims(user.uid, userConfig.customUserClaims);
 
-			// e. report user has been updated
+			// f. report user has been updated
 			resolve(true);
-		});
+		}
 
 		// 5. report no special permissions for user
 		resolve(false);
@@ -99,35 +102,100 @@ function setCustomClaimsForNewUser(firebaseAdmin, user, config = {})
 	})
 }
 
-function updateCustomClaimsForExistingUser(firebaseAdmin, user, config = {})
+function onCreateTeamMember(firebaseAdmin, email, customClaims)
 {
 	return new Promise(async (resolve, reject) => {
 
+		// 1. load
+		let userRecord = await _getRegisteredUser(firebaseAdmin, email);
 
+		// 2. register or default
+		let userClaims = userRecord.customClaims || {};
+
+		// 3. update
+		Object.keys(customClaims).forEach(sKey => userClaims[sKey] = customClaims[sKey]);
+
+		// 4. store
+		await firebaseAdmin.auth().setCustomUserClaims(userRecord.uid, userClaims);
+
+		// 5. send
+		resolve(userRecord);
+	});
+}
+
+function onUpdateTeamMember(firebaseAdmin, email, customClaims)
+{
+	return new Promise(async (resolve, reject) => {
+
+		// 1. load
+		let userRecord = await _getRegisteredUser(firebaseAdmin, email);
+
+		// 2. register or default
+		let userClaims = userRecord.customClaims || {};
+
+		// 3. update
+		Object.keys(customClaims).forEach(sKey => userClaims[sKey] = customClaims[sKey]);
+
+		// 4. store
+		await firebaseAdmin.auth().setCustomUserClaims(userRecord.uid, userClaims);
+
+		// 5. send
+		resolve(userRecord);
+	});
+}
+
+function onDeleteTeamMember(firebaseAdmin, email, customClaims)
+{
+	return new Promise(async (resolve, reject) => {
+
+		// 1. load
+		let userRecord = await _getRegisteredUser(firebaseAdmin, email)
+
+		// 2. register or default
+		let userClaims = userRecord.customClaims || {};
+
+		// 3. update
+		Object.keys(customClaims).forEach(sKey => {
+
+			if (customClaims[sKey] === undefined)
+			{
+				delete userClaims[sKey];
+			}
+			else
+			{
+				userClaims[sKey] = customClaims[sKey];
+			}
+		});
+
+		// 4. store
+		await firebaseAdmin.auth().setCustomUserClaims(userRecord.uid, userClaims);
+
+		// 5. send
+		resolve(userRecord);
 	});
 }
 
 
-function onCreateTeamMember()
-{
+function _getRegisteredUser(firebaseAdmin, sEmail) {
+
 	return new Promise(async (resolve, reject) => {
 
+		await firebaseAdmin.auth().getUserByEmail(sEmail)
+			.then(async (userRecord) => {
+
+				resolve(userRecord);
+
+			})
+			.catch(async error => {
+
+				// Create the user
+				const userRecord = await firebaseAdmin.auth().createUser({ email: sEmail }); // displayName: sDisplayName
+
+				resolve(userRecord);
+			})
 	});
 }
 
-function onUpdateTeamMember()
-{
-	return new Promise(async (resolve, reject) => {
-
-	});
-}
-
-function onDeleteTeamMember()
-{
-	return new Promise(async (resolve, reject) => {
-
-	});
-}
 
 
 
@@ -139,8 +207,7 @@ function onDeleteTeamMember()
 module.exports = {
 	setSpecialCustomClaims,
 	setCustomClaimsForNewUser,
-	updateCustomClaimsForExistingUser,
 	onCreateTeamMember,
 	onUpdateTeamMember,
-	onDeleteTeamMember
+	onDeleteTeamMember,
 };
