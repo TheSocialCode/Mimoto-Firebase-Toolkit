@@ -1,6 +1,6 @@
 {
   "name": "@thesocialcode/mimoto-firebase-toolkit",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Mimoto Firebase Toolkit",
   "engines": {
     "node": "16"
@@ -9,8 +9,18 @@
   "dependencies": {
     "openai": "^3.2.1"
   },
-  "devDependencies": {
-
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "private": false
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheSocialCode/Mimoto-Firebase-Toolkit.git"
+  },
+  "author": "Sebastian Kersten (sebastian@thesocialcode.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheSocialCode/Mimoto-Firebase-Toolkit/issues"
+  },
+  "homepage": "https://github.com/TheSocialCode/Mimoto-Firebase-Toolkit#readme"
 }
