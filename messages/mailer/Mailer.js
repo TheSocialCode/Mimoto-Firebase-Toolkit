@@ -5,7 +5,7 @@
 
 
 // import Mimoto classes
-const MimotoFirebaseUtils = require('./MimotoFirebaseUtils');
+const DataUtils = require('../../utils/DataUtils');
 
 
 
@@ -46,7 +46,7 @@ function sendMail(firebaseAdmin, config = {}, data = {})
 		if (config.templates?.text?.src)
 		{
 			try {
-				mailRequest.message.text = await MimotoFirebaseUtils.readFile(config.templates.text.src);
+				mailRequest.message.text = await DataUtils.readFile(config.templates.text.src);
 			}
 			catch (error) { reject(error); return; }
 		}
@@ -59,7 +59,7 @@ function sendMail(firebaseAdmin, config = {}, data = {})
 		if (config.templates?.html?.src)
 		{
 			try {
-				mailRequest.message.html = await MimotoFirebaseUtils.readFile(config.templates.html.src);
+				mailRequest.message.html = await DataUtils.readFile(config.templates.html.src);
 			}
 			catch (error) { reject(error); return; }
 		}
@@ -74,11 +74,11 @@ function sendMail(firebaseAdmin, config = {}, data = {})
 
 
 		// 6 convert data to deep vars
-		let aDeepValues = MimotoFirebaseUtils.collectDeepValues(data);
+		let aDeepValues = DataUtils.collectDeepValues(data);
 
 		// 7. inject vars into templates
-		mailRequest.message.text = MimotoFirebaseUtils.replaceVars(mailRequest.message.text, aDeepValues);
-		mailRequest.message.html = MimotoFirebaseUtils.replaceVars(mailRequest.message.html, aDeepValues);
+		mailRequest.message.text = DataUtils.replaceVars(mailRequest.message.text, aDeepValues);
+		mailRequest.message.html = DataUtils.replaceVars(mailRequest.message.html, aDeepValues);
 
 
 

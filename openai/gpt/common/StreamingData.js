@@ -5,7 +5,7 @@
 
 
 // import Mimoto classes
-const EventDispatcher = require("./../../../common/EventDispatcher");
+const EventDispatcher = require("../../../utils/EventDispatcher");
 
 
 class StreamingData extends EventDispatcher {
